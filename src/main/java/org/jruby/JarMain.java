@@ -25,15 +25,15 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
 public class JarMain implements Runnable {
-    
+
     static final String MAIN = "/" + JarMain.class.getName().replace('.', '/') + ".class";
 
     final boolean debug = isDebug();
-    
+
     protected final String[] args;
     protected final String archive;
     private final String path;
-    
+
     protected File extractRoot;
 
     protected URLClassLoader classLoader;
@@ -43,15 +43,15 @@ public class JarMain implements Runnable {
         URL mainClass = getClass().getResource(MAIN);
         try {
             this.path = mainClass.toURI().getSchemeSpecificPart();
-        } 
+        }
         catch (URISyntaxException e) {
             throw new RuntimeException(e);
         }
         archive = this.path.replace("!" + MAIN, "").replace("file:", "");
-        
+
         Runtime.getRuntime().addShutdownHook(new Thread(this));
     }
-    
+
     protected URL[] extractArchive() throws Exception {
         final JarFile jarFile = new JarFile(archive);
         try {
@@ -84,18 +84,18 @@ public class JarMain implements Runnable {
         }
         return null; // do not extract entry
     }
-    
+
     protected URL extractEntry(final JarEntry entry, final String path) throws Exception {
         final File file = new File(extractRoot, path);
         if ( entry.isDirectory() ) {
-            file.mkdirs(); 
+            file.mkdirs();
             return null;
         }
         final String entryPath = entryPath(entry.getName());
         final InputStream entryStream;
         try {
             entryStream = new URI("jar", entryPath, null).toURL().openStream();
-        } 
+        }
         catch (IllegalArgumentException e) {
             // TODO gems '%' file name "encoding" ?!
             debug("failed to open jar:" + entryPath + " skipping entry: " + entry.getName(), e);
@@ -110,7 +110,7 @@ public class JarMain implements Runnable {
             while ((bytesRead = entryStream.read(buf)) != -1) {
                 outStream.write(buf, 0, bytesRead);
             }
-        } 
+        }
         finally {
             entryStream.close();
             outStream.close();
@@ -135,7 +135,7 @@ public class JarMain implements Runnable {
         invokeMethod(scriptingContainer, "setClassLoader", new Class[] { ClassLoader.class }, classLoader);
         return scriptingContainer;
     }
-    
+
     protected int launchJRuby(final URL[] jars) throws Exception {
         final Object scriptingContainer = newScriptingContainer(jars);
         debug("invoking " + archive + " with: " + Arrays.deepToString(args));
@@ -144,7 +144,7 @@ public class JarMain implements Runnable {
     }
 
     protected String launchScript() {
-        return 
+        return
         "begin\n" +
         "  require 'META-INF/init.rb'\n" +
         "  require 'META-INF/main.rb'\n" +
@@ -153,7 +153,7 @@ public class JarMain implements Runnable {
         "  e.status\n" +
         "end";
     }
-    
+
     protected int start() throws Exception {
         final URL[] jars = extractArchive();
         return launchJRuby(jars);
@@ -171,7 +171,7 @@ public class JarMain implements Runnable {
     protected void warn(String msg) {
         System.out.println("WARNING: " + msg);
     }
-    
+
     protected void delete(File f) {
         try {
           if (f.isDirectory() && !isSymlink(f)) {
@@ -232,16 +232,16 @@ public class JarMain implements Runnable {
             System.exit(1);
         }
     }
-    
-    protected static Object invokeMethod(final Object self, final String name, final Object... args) 
+
+    protected static Object invokeMethod(final Object self, final String name, final Object... args)
         throws NoSuchMethodException, IllegalAccessException, Exception {
-        
+
         final Class[] signature = new Class[args.length];
         for ( int i = 0; i < args.length; i++ ) signature[i] = args[i].getClass();
         return invokeMethod(self, name, signature, args);
     }
 
-    protected static Object invokeMethod(final Object self, final String name, final Class[] signature, final Object... args) 
+    protected static Object invokeMethod(final Object self, final String name, final Class[] signature, final Object... args)
         throws NoSuchMethodException, IllegalAccessException, Exception {
         Method method = self.getClass().getDeclaredMethod(name, signature);
         try {
@@ -255,7 +255,7 @@ public class JarMain implements Runnable {
             throw e;
         }
     }
-    
+
     static boolean isDebug() {
         return Boolean.getBoolean("warbler.debug");
     }
