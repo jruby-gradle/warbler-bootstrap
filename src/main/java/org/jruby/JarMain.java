@@ -5,6 +5,8 @@
  * See the file LICENSE.txt for details.
  */
 
+package com.lookout.jruby;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.FileOutputStream;

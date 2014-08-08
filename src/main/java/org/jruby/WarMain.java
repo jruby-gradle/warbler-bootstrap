@@ -5,6 +5,8 @@
  * See the file LICENSE.txt for details.
  */
 
+package com.lookout.jruby;
+
 import java.lang.reflect.Method;
 import java.io.InputStream;
 import java.io.ByteArrayInputStream;
