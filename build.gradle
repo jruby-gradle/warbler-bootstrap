@@ -1,0 +1,16 @@
+apply plugin: 'maven'
+apply plugin: 'java'
+
+group = 'com.lookout'
+version = '1.0.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+    mavenLocal()
+}
+
+
+dependencies {
+  runtime group: 'org.jruby.rack', name: 'jruby-rack', version: '1.1.+'
+  runtime group: 'org.jruby', name: 'jruby-complete', version: '1.7.+'
+}
