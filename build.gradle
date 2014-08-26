@@ -1,10 +1,47 @@
 apply plugin: 'maven'
 apply plugin: 'java'
+apply plugin: 'com.jfrog.bintray'
 
-group = 'com.lookout'
-version = '1.0.0-SNAPSHOT'
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:0.5'
+    }
+}
+
+group = 'com.github.jruby-gradle'
+version = '0.1.0'
+sourceCompatibility = '1.7'
 
 repositories {
-    mavenCentral()
+    jcenter()
     mavenLocal()
 }
+
+task sourcesJar(type: Jar, dependsOn: classes) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+artifacts {
+    archives sourcesJar
+}
+
+bintray {
+    user = project.bintrayUser
+    key = project.bintrayKey
+    publish = true
+    dryRun = false
+    configurations = ['archives']
+
+    pkg {
+        repo = 'libraries'
+        userOrg = 'jruby-gradle'
+        name = 'warbler-bootstrap'
+    }
+}
+bintrayUpload.dependsOn assemble
+
+// vim: ft=groovy
