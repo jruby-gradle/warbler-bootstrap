@@ -1,4 +1,5 @@
 /**
+ * Copyright (c) 2014 R. Tyler Croy
  * Copyright (c) 2010-2012 Engine Yard, Inc.
  * Copyright (c) 2007-2009 Sun Microsystems, Inc.
  * This source code is available under the MIT license.
@@ -289,16 +290,6 @@ public class WarMain extends JarMain {
     protected String locateExecutableScript(final String executable) {
         return executableScriptEnvPrefix() +
         "begin\n" +
-        // locate the executable within gemspecs :
-        "  require 'rubygems' \n" +
-            "  begin\n" +
-            // add bundler gems to load path:
-            "    require 'bundler' \n" +
-            // TODO: environment from web.xml. Any others?
-            "    Bundler.setup(:default, *ENV.values_at('RACK_ENV', 'RAILS_ENV').compact)\n" +
-            "  rescue LoadError\n" +
-            // bundler not used
-            "  end\n" +
         "  exec = '"+ executable +"' \n" +
         "  spec = Gem::Specification.find { |s| s.executables.include?(exec) } \n" +
         "  spec ? spec.bin_file(exec) : nil \n" +
