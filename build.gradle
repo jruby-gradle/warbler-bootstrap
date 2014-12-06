@@ -1,23 +1,18 @@
-apply plugin: 'maven'
-apply plugin: 'java'
-apply plugin: 'com.jfrog.bintray'
-
-buildscript {
-    repositories {
-        jcenter()
-    }
-    dependencies {
-        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:0.5'
-    }
+plugins {
+    id "com.jfrog.bintray" version "1.0"
 }
 
+apply plugin: 'maven'
+apply plugin: 'java'
+
+version = '0.2.0'
 group = 'com.github.jruby-gradle'
-version = '0.1.1'
+description = 'war bootstrap code for launching JRuby web apps'
 sourceCompatibility = '1.7'
+
 if (System.env.RELEASE != '1') {
     version = "${version}-SNAPSHOT"
 }
-
 
 repositories {
     jcenter()
@@ -32,14 +27,6 @@ task sourcesJar(type: Jar, dependsOn: classes) {
 artifacts {
     archives sourcesJar
 }
-
-// Ensure we don't fail in CI or on a system without these values set in
-// ~/.gradle/gradle.properties
-if( !hasProperty( 'bintrayUser' ) )
-  ext.bintrayUser = ''
-
-if( !hasProperty( 'bintrayKey' ) )
-  ext.bintrayKey = ''
 
 bintray {
     user = project.bintrayUser
