@@ -6,7 +6,7 @@
  * See the file LICENSE.txt for details.
  */
 
-package com.lookout.jruby;
+package com.github.jrubygradle.warbler;
 
 import java.lang.reflect.Method;
 import java.io.InputStream;
